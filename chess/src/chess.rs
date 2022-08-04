@@ -1,4 +1,7 @@
 use std::ops::Add;
+use std::ops::Sub;
+use std::ops::Mul;
+use std::ops::Div;
 use std::collections::HashMap;
 
 pub enum PieceType{
@@ -19,6 +22,7 @@ pub enum MoveType{
     ForwardOne,
 }
 
+#[derive(Clone)]
 pub struct Point{
     pub x: u32,
     pub y: u32,
@@ -52,6 +56,36 @@ impl Add for Point{
         Self{
             x: self.x + other.x,
             y: self.y + other.y,
+        }
+    }
+}
+
+impl Sub for Point{
+    type Output = Self;
+    fn sub(self, other: Self) -> Self{
+        Self{
+            x: self.x - other.x,
+            y: self.y - other.y,
+        }
+    }
+}
+
+impl Mul for Point{
+    type Output = Self;
+    fn mul(self, other: Self) -> Self{
+        Self{
+            x: self.x * other.x,
+            y: self.y * other.y,
+        }
+    }
+}
+
+impl Div for Point{
+    type Output = Self;
+    fn div(self, rhs: Self) -> Self{
+        Self{
+            x: self.x / rhs.x,
+            y: self.y / rhs.y,
         }
     }
 }
