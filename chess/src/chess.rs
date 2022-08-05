@@ -89,3 +89,53 @@ impl Div for Point{
         }
     }
 }
+
+impl PieceType{
+    pub fn get_move_type(&self) -> MoveType{
+        match self{
+            PieceType::Pawn => MoveType::ForwardOne,
+            PieceType::Rook => MoveType::UpDown,
+            PieceType::Bishop => MoveType::Diagonal,
+            PieceType::Knight => MoveType::LShape,
+            PieceType::Queen => MoveType::AnyDirectionUnlimited,
+            PieceType::King => MoveType::AnyDirectionOne,
+        }
+    }
+}
+
+
+impl ChessPiece{
+    pub fn new(piece_type: PieceType) -> ChessPiece{
+        let move_type: MoveType = piece_type.get_move_type();
+        ChessPiece{
+            piece_type,
+            move_constraint: move_type,
+            position: Point::new(0, 0),
+            is_alive: true,
+        }
+    }
+    pub fn set_position(&mut self, new_position: Point){
+        self.position = new_position;
+    }
+    pub fn invert_alive(&mut self){
+        self.is_alive = !is_alive;
+    }
+    pub fn get_move_constraint(&self) -> &MoveType{
+        &(self.move_constraint)
+    }
+    pub fn get_piece_type(&self) -> &PieceType{
+        &(self.piece_type)
+    }
+    pub fn get_position(&self) -> &Point{
+        &(self.position)
+    }
+    pub fn is_it_alive(&self) -> bool{
+        self.is_alive
+    }
+    pub fn move_piece(&mut self, new_point: &Point) -> Result::<&Point, ()>{
+        Ok(self.get_position())
+    }
+    fn check_for_LShape(&self, new_point: &Point) -> bool{
+        false
+    }
+}
