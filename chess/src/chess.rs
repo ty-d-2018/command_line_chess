@@ -22,7 +22,7 @@ pub enum MoveType{
     ForwardOne,
 }
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 pub struct Point{
     pub x: u32,
     pub y: u32,
@@ -135,7 +135,73 @@ impl ChessPiece{
     pub fn move_piece(&mut self, new_point: &Point) -> Result::<&Point, ()>{
         Ok(self.get_position())
     }
-    fn check_for_LShape(&self, new_point: &Point) -> bool{
-        false
+    fn match_knight_move(&self, new_point: &Point) -> bool{
+        match self.piece_type{
+            PieceType::Knight => (),
+            _ => {return false;},
+        };
+        let x2: u32 = new_point.x;
+        let y2: u32 = new_point.y;
+        let x1: u32 = self.position.x;
+        let y1: u32 = self.position.y;
+        is_it_left = match ChessPiece::where_is_axis_2(x1, x2){
+            Some(v) => !v,
+            None => {return false;},
+        };
+        is_it_above = match ChessPiece::where_is_axis_2(y1, y2){
+            Some(v) => v,
+            None => {return false;},
+        };
+        let does_the_point_match: bool = ChessPiece::does_l_shapes_match_point_2(is_it_left, is_it_above, x1, y1, new_point);
+
+        does_the_point_match
+    }
+    fn where_is_axis_2(axis_1: u32, axis_2: u32) -> Some::<bool>{
+        if axis_2 - axis_1 > 0{
+            return Some(true);
+        }else if axis_2 - axis_1 < 0{
+            return Some(false);
+        }else{
+            return None;
+        }
+    }
+
+    fn does_l_shapes_match_point_2(is_it_left: bool, is_it_above: bool, x1: u32, y1: u32, point_2: &Point) -> bool{
+        let mut l_shape_vertical: Point = Point::new(0, 0);
+        let mut l_shape_horizontal: Point = Point::new(0, 0);
+        if is_it_above{
+            if is_it_left{
+                l_shape_vertical.x = -1;
+                l_shape_vertical.y = 2;
+                l_shape_horizontal.x = -2;
+                l_shape_horizontal.y = 1;
+            }else{
+                l_shape_vertical.x = 1;
+                l_shape_vertical.y = 2
+                l_shape_horizontal.x = 2;
+                l_shape_horizontal.y = 1;
+            }
+        }else{
+            if is_it_left{
+                l_shape_vertical.x = -1;
+                l_shape_vertical.y = -2;
+                l_shape_horizontal.x = -2;
+                l_shape_horizontal.y = -1;
+            }else{
+                l_shape_vertical.x = 1;
+                l_shape_vertical.y = -2
+                l_shape_horizontal.x = 2;
+                l_shape_horizontal.y = -1;
+            }
+        }
+        l_shape_vertical.x = x1 + l_shape_vertical.x;
+        l_shape_horizontal.x = x1 + l_shape_horizontal.x;
+        l_shape_vertical.y = y1 + l_shape_vertical.y;
+        l_shape_horizontal.y = y1 + l_shape_horizontal.y;
+        if l_shape_vertical == *(point_2) || l_shape_horizontal == *(point2){
+            return true;
+        }else{
+            return false;
+        } 
     }
 }
