@@ -22,10 +22,10 @@ pub enum MoveType{
     ForwardOne,
 }
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Debug)]
 pub struct Point{
-    pub x: u32,
-    pub y: u32,
+    pub x: i32,
+    pub y: i32,
 }
 
 pub struct ChessPiece{
@@ -42,7 +42,7 @@ pub struct ChessBoard{
 }
 
 impl Point{
-    pub fn new(x: u32, y: u32) -> Point{
+    pub fn new(x: i32, y: i32) -> Point{
         Point{
             x,
             y,
@@ -118,7 +118,7 @@ impl ChessPiece{
         self.position = new_position;
     }
     pub fn invert_alive(&mut self){
-        self.is_alive = !is_alive;
+        self.is_alive = !(self.is_alive);
     }
     pub fn get_move_constraint(&self) -> &MoveType{
         &(self.move_constraint)
@@ -132,23 +132,31 @@ impl ChessPiece{
     pub fn is_it_alive(&self) -> bool{
         self.is_alive
     }
-    pub fn move_piece(&mut self, new_point: &Point) -> Result::<&Point, ()>{
-        Ok(self.get_position())
+    pub fn move_piece(&mut self, new_point: &Point) -> Option::<&Point>{
+        let can_piece_move_to_point: bool = match self.piece_type{
+            PieceType::Knight => {self.can_knight_move(new_point)},
+            _ => false,
+        };
+        if !can_piece_move_to_point{
+            return None;
+        }
+        self.set_position(new_point.clone());
+        Some(self.get_position())
     }
-    fn match_knight_move(&self, new_point: &Point) -> bool{
+    fn can_knight_move(&self, new_point: &Point) -> bool{
         match self.piece_type{
             PieceType::Knight => (),
             _ => {return false;},
         };
-        let x2: u32 = new_point.x;
-        let y2: u32 = new_point.y;
-        let x1: u32 = self.position.x;
-        let y1: u32 = self.position.y;
-        is_it_left = match ChessPiece::where_is_axis_2(x1, x2){
+        let x2: i32 = new_point.x;
+        let y2: i32 = new_point.y;
+        let x1: i32 = self.position.x;
+        let y1: i32 = self.position.y;
+        let is_it_left = match ChessPiece::where_is_axis_2(x1, x2){
             Some(v) => !v,
             None => {return false;},
         };
-        is_it_above = match ChessPiece::where_is_axis_2(y1, y2){
+        let is_it_above = match ChessPiece::where_is_axis_2(y1, y2){
             Some(v) => v,
             None => {return false;},
         };
@@ -156,7 +164,7 @@ impl ChessPiece{
 
         does_the_point_match
     }
-    fn where_is_axis_2(axis_1: u32, axis_2: u32) -> Some::<bool>{
+    fn where_is_axis_2(axis_1: i32, axis_2: i32) -> Option::<bool>{
         if axis_2 - axis_1 > 0{
             return Some(true);
         }else if axis_2 - axis_1 < 0{
@@ -166,7 +174,7 @@ impl ChessPiece{
         }
     }
 
-    fn does_l_shapes_match_point_2(is_it_left: bool, is_it_above: bool, x1: u32, y1: u32, point_2: &Point) -> bool{
+    fn does_l_shapes_match_point_2(is_it_left: bool, is_it_above: bool, x1: i32, y1: i32, point_2: &Point) -> bool{
         let mut l_shape_vertical: Point = Point::new(0, 0);
         let mut l_shape_horizontal: Point = Point::new(0, 0);
         if is_it_above{
@@ -177,7 +185,7 @@ impl ChessPiece{
                 l_shape_horizontal.y = 1;
             }else{
                 l_shape_vertical.x = 1;
-                l_shape_vertical.y = 2
+                l_shape_vertical.y = 2;
                 l_shape_horizontal.x = 2;
                 l_shape_horizontal.y = 1;
             }
@@ -189,7 +197,7 @@ impl ChessPiece{
                 l_shape_horizontal.y = -1;
             }else{
                 l_shape_vertical.x = 1;
-                l_shape_vertical.y = -2
+                l_shape_vertical.y = -2;
                 l_shape_horizontal.x = 2;
                 l_shape_horizontal.y = -1;
             }
@@ -198,7 +206,7 @@ impl ChessPiece{
         l_shape_horizontal.x = x1 + l_shape_horizontal.x;
         l_shape_vertical.y = y1 + l_shape_vertical.y;
         l_shape_horizontal.y = y1 + l_shape_horizontal.y;
-        if l_shape_vertical == *(point_2) || l_shape_horizontal == *(point2){
+        if l_shape_vertical == *(point_2) || l_shape_horizontal == *(point_2){
             return true;
         }else{
             return false;
