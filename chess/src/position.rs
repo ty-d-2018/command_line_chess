@@ -5,6 +5,19 @@ pub enum BoardResponse{
     ThisCellIsEmpty,
 }
 
+pub enum Path{
+    UpRight,
+    UpLeft,
+    DownLeft,
+    DownRight,
+    RightSideUp,
+    RightSideDown,
+    UpSideLeft,
+    UpSideRight,
+    DownSideLeft,
+    DownSideRight,
+}
+
 pub trait Location{
     fn get_grid_number(&self) -> usize;
     fn get_residents(&self) -> HashMap::<bool, Vec::<impl Location>>;
@@ -13,17 +26,37 @@ pub trait Location{
     fn get_name(&self) -> String;
 }
 
-pub struct Movement;
+pub struct Movement{
+    relative: usize,
+    timetable: bool,
+}
 
 impl Movement{
-    fn find_slant(label: &String) -> Option::<(bool, bool)>{
+    pub fn new(relative: usize, timetable: bool) -> Movement{
+        Movement{
+            relative,
+            timetable,
+        }
+    }
+    fn find_slant(path: &Path) -> Option::<Movement>{
         match label.as_str(){
-            "up-right" => Some((true, true)),
-            "up-left" => Some((false, true)),
-            "down-left" => Some((false, false)),
-            "down-right" => Some((true, false)),
+            Path::UpRight => Some(Movement::new(0, false)),
+            Path::UpLeft => Some(Movement::new(0, false)),
+            Path::DownLeft => Some(Movement::new(0, false)),
+            Path::DownRight => Some(Movement::new(0, false)),
             _ => None
         }
     }
-    pub fn slant(piece: &impl Location){}
+    fn find_gallop(label &String) -> Movement{
+        todo!();
+    }
+    pub fn slant(piece: &impl Location){
+        todo!();
+    }
+    pub fn lrtd(piece: &impl Location){
+        todo!();
+    }
+    pub fn gallop(piece: &impl Location){
+        todo!();
+    }
 }
