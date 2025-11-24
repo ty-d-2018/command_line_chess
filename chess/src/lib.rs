@@ -1,6 +1,4 @@
-
-pub mod chess;
-
+pub mod position;
 
 
 #[cfg(test)]
